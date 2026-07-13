@@ -48,14 +48,14 @@ file:///usr/share/distribution-gpg-keys/fedora/RPM-GPG-KEY-fedora-$releasever-pr
 
 [local]
 name=local
-baseurl=https://kojipkgs.fedoraproject.org/repos/rawhide/latest/$basearch/
+baseurl=https://kojipkgs.fedoraproject.org/repos/f{{ releasever }}-build/latest/$basearch/
 cost=2000
 enabled={{ not mirrored }}
 skip_if_unavailable=False
 
 [local-source]
 name=local-source
-baseurl=https://kojipkgs.fedoraproject.org/repos/rawhide/latest/src/
+baseurl=https://kojipkgs.fedoraproject.org/repos/f{{ releasever }}-build/latest/src/
 cost=2000
 enabled=0
 skip_if_unavailable=False
