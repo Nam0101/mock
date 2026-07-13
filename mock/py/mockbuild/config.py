@@ -33,7 +33,7 @@ PLUGIN_LIST = ['tmpfs', 'root_cache', 'yum_cache', 'mount', 'bind_mount',
                'lvm_root', 'compress_logs', 'sign', 'pm_request',
                'hw_info', 'procenv', 'showrc', 'rpkg_preprocessor',
                'rpmautospec', 'buildroot_lock', 'export_buildroot_image',
-               'unbreq', 'expand_spec', 'system_monitor']
+               'unbreq', 'expand_spec', 'system_monitor', 'build_snapshot']
 
 def nspawn_supported():
     """Detect some situations where the systemd-nspawn chroot code won't work"""
