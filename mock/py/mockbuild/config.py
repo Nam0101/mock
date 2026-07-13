@@ -102,6 +102,11 @@ def setup_default_config_opts():
     #    config_opts['nspawn_args'] += ['--suppress-sync=yes']
     config_opts['use_container_host_hostname'] = True
 
+    config_opts['vm_image'] = None
+    config_opts['vm_memory'] = None
+    config_opts['vm_cpus'] = None
+    config_opts['qemu_path'] = None
+
     config_opts['use_bootstrap'] = True
     config_opts['use_bootstrap_image'] = True
     config_opts['bootstrap_image'] = 'fedora:latest'
