@@ -16,8 +16,10 @@ from mockbuild.trace_decorator import traceLog
 import mockbuild.util
 
 # repoquery used
-repoquery_avail_opts = \
-    "--qf '%{name}-%{epoch}:%{version}-%{release}.%{arch} %{buildtime} %{size} %{repoid}\\n' '*'"
+repoquery_avail_opts = [
+    "--qf", "%{name}-%{epoch}:%{version}-%{release}.%{arch} %{buildtime} %{size} %{repoid}\\n",
+    "*"
+]
 
 # set up logging, module options
 requires_api_version = "1.1"
@@ -53,12 +55,14 @@ class PackageState(object):
                 out_file = self.buildroot.resultdir + '/available_pkgs.log'
                 chrootpath = self.buildroot.make_chroot_path()
                 if self.buildroot.config['package_manager'] == 'yum':
-                    cmd = "/usr/bin/repoquery --installroot={0} -c {0}/etc/yum.conf {1} | sort > {2}".format(
-                        chrootpath, repoquery_avail_opts, out_file)
+                    cmd = ["/usr/bin/repoquery", "--installroot=" + chrootpath,
+                           "-c", chrootpath + "/etc/yum.conf"] + repoquery_avail_opts
                 else:
-                    cmd = "/usr/bin/dnf --installroot={0} repoquery -c {0}/etc/dnf/dnf.conf {1} | sort > {2}".format(
-                        chrootpath, repoquery_avail_opts, out_file)
-                mockbuild.util.do(cmd, shell=True, env=self.buildroot.env)
+                    cmd = ["/usr/bin/dnf", "--installroot=" + chrootpath, "repoquery",
+                           "-c", chrootpath + "/etc/dnf/dnf.conf"] + repoquery_avail_opts
+                output = mockbuild.util.do(cmd, returnOutput=1, env=self.buildroot.env)
+                with open(out_file, 'w') as out_fd:
+                    out_fd.write("".join(sorted(output.splitlines(True))))
                 self.avail_done = True
                 self.state.finish("Outputting list of available packages")
 
@@ -71,10 +75,10 @@ class PackageState(object):
         self.state.start("Outputting list of installed packages")
 
         try:
-            cmd = "rpm -qa --root '%s' --qf '%%{nevra} %%{buildtime} %%{size} installed\\n'" % (
-                self.buildroot.make_chroot_path())
+            cmd = ["rpm", "-qa", "--root", self.buildroot.make_chroot_path(),
+                   "--qf", "%{nevra} %{buildtime} %{size} installed\\n"]
             with self.buildroot.uid_manager:
-                output, _ = self.buildroot.doOutChroot(cmd, returnOutput=1, shell=True)
+                output, _ = self.buildroot.doOutChroot(cmd, returnOutput=1)
                 with open(out_file, 'w') as out_fd:
                     out_fd.write(output)
         finally:
